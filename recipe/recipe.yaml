@@ -6,13 +6,14 @@ package:
   name: libarea
   version: ${{ version }}
 
-# Dan Heeks' libarea has no releases and no upstream tarball; the copy that is
-# actually maintained is the one vendored in FreeCAD's Area module, which is
-# what this builds. The path is relative to this recipe, so the checkout next
-# door is the source of truth until the library is split into a repository of
-# its own -- which is the step this package exists to justify.
+# Dan Heeks' libarea has no releases and no upstream tarball. The copy that is
+# actually maintained was the one vendored in FreeCAD's Area module, and it now
+# lives in a repository of its own -- the split this package existed to justify
+# -- which is what this builds. The path is relative to this recipe, so the
+# checkout next door is the source of truth until that repository has a remote
+# to fetch a tag from.
 source:
-  path: ../../fcad/src/Mod/Area/libarea
+  path: ../../libarea
 
 build:
   number: ${{ build }}
@@ -59,6 +60,7 @@ about:
   homepage: https://github.com/Heeks/libarea
   license: BSD-3-Clause AND BSL-1.0
   license_file:
+    - libarea-License.txt
     - kurve/License.txt
     - clipper-License.txt
   summary: 2D area (closed curve) arithmetic with arcs, built on Clipper
@@ -77,8 +79,7 @@ about:
     carries its face count into every operation downstream of it, which can
     cost more than the boolean the 2D path replaced.
 
-    This is the copy vendored in FreeCAD's Area module, minus the pieces that
-    depend on FreeCAD. Clipper itself is built in and its header installed
-    alongside, so there is one library to link and one ClipperLib in the
-    process.
-  repository: https://github.com/realthunder/FreeCAD
+    This is the copy that FreeCAD's Area module vendored, split out, minus the
+    pieces that depend on FreeCAD. Clipper itself is built in and its header
+    installed alongside, so there is one library to link and one ClipperLib in
+    the process.

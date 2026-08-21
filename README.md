@@ -27,12 +27,14 @@ would be interposed on each other by the loader.
 ## Source
 
 There is no upstream release. Dan Heeks' repository has no tags and no
-tarball, and the copy that is actually maintained is the one in FreeCAD's
-`src/Mod/Area/libarea`, which is what the recipe builds -- by relative path,
-from the checkout next door. That is deliberate for now: the library is split
-out of FreeCAD only once this package has proved it is worth it.
+tarball, and the copy that is actually maintained was the one in FreeCAD's
+`src/Mod/Area/libarea` -- which has since been split into a repository of its
+own, `../libarea`, the step this package existed to justify. That repository
+carries its own CMake build, so the recipe no longer has to supply one; it is
+still reached by relative path, from the checkout next door, until there is a
+remote with a tag to fetch.
 
-Left out of the package, and why:
+Left out of the repository, and so out of the package:
 
 | Not built | Reason |
 | --- | --- |
