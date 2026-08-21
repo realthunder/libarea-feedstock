@@ -1,0 +1,84 @@
+context:
+  version: "0.1.0"
+  build: 0
+
+package:
+  name: libarea
+  version: ${{ version }}
+
+# Dan Heeks' libarea has no releases and no upstream tarball; the copy that is
+# actually maintained is the one vendored in FreeCAD's Area module, which is
+# what this builds. The path is relative to this recipe, so the checkout next
+# door is the source of truth until the library is split into a repository of
+# its own -- which is the step this package exists to justify.
+source:
+  path: ../../fcad/src/Mod/Area/libarea
+
+build:
+  number: ${{ build }}
+  script:
+    - if: win
+      then: bld.bat
+      else: build.sh
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - ${{ stdlib('c') }}
+    - cmake
+    - ninja
+  run_exports:
+    - ${{ pin_subpackage('libarea', upper_bound='x.x') }}
+
+tests:
+  - package_contents:
+      include:
+        - libarea/Area.h
+        - libarea/Curve.h
+        - libarea/kurve/geometry.h
+        - libarea/clipper.hpp
+      lib:
+        - area
+      files:
+        - lib/cmake/libarea/libareaConfig.cmake
+  - script:
+      - cmake -G Ninja -B build -S test_consumer -DCMAKE_BUILD_TYPE=Release
+      - cmake --build build
+      - ctest --test-dir build --output-on-failure
+    requirements:
+      run:
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib('c') }}
+        - cmake
+        - ninja
+    files:
+      recipe:
+        - test_consumer/
+
+about:
+  homepage: https://github.com/Heeks/libarea
+  license: BSD-3-Clause AND BSL-1.0
+  license_file:
+    - kurve/License.txt
+    - clipper-License.txt
+  summary: 2D area (closed curve) arithmetic with arcs, built on Clipper
+  description: |
+    libarea does boolean operations, offsetting and pocketing on closed 2D
+    curves. Clipper does the actual clipping, on an integer lattice, so
+    everything it touches comes back as straight segments; libarea's value is
+    on either side of that. Going in, an arc is carried as a centre and an end
+    point and only walked into segments at the last moment; coming out,
+    FitArcs recognises runs of segments that lie on a circle and puts the arcs
+    back. It also rebuilds the nesting of the result and re-winds contours by
+    depth, so it tolerates input whose winding says nothing about what is a
+    hole.
+
+    Keeping arcs matters beyond fidelity. A profile that comes back faceted
+    carries its face count into every operation downstream of it, which can
+    cost more than the boolean the 2D path replaced.
+
+    This is the copy vendored in FreeCAD's Area module, minus the pieces that
+    depend on FreeCAD. Clipper itself is built in and its header installed
+    alongside, so there is one library to link and one ClipperLib in the
+    process.
+  repository: https://github.com/realthunder/FreeCAD
