@@ -1,6 +1,6 @@
 context:
-  version: "0.1.0"
-  build: 7
+  version: "0.2.0"
+  build: 0
 
 package:
   name: libarea
@@ -38,6 +38,7 @@ tests:
         - libarea/Curve.h
         - libarea/kurve/geometry.h
         - libarea/clipper.hpp
+        - libarea/clipper2/clipper.h
       lib:
         - area
       files:
@@ -63,6 +64,7 @@ about:
     - libarea-License.txt
     - kurve/License.txt
     - clipper-License.txt
+    - clipper2-License.txt
   summary: 2D area (closed curve) arithmetic with arcs, built on Clipper
   description: |
     libarea does boolean operations, offsetting and pocketing on closed 2D
@@ -80,6 +82,8 @@ about:
     cost more than the boolean the 2D path replaced.
 
     This is the copy that FreeCAD's Area module vendored, split out, minus the
-    pieces that depend on FreeCAD. Clipper itself is built in and its header
-    installed alongside, so there is one library to link and one ClipperLib in
-    the process.
+    pieces that depend on FreeCAD. Clipper itself is built in and its headers
+    installed alongside, so there is one library to link and one copy of
+    Clipper in the process. Both versions are carried: the area arithmetic
+    runs on Clipper2, and Clipper1 stays because FreeCAD's adaptive clearing
+    still drives it directly.
