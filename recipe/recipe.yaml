@@ -9,11 +9,11 @@ package:
 # Dan Heeks' libarea has no releases and no upstream tarball. The copy that is
 # actually maintained was the one vendored in FreeCAD's Area module, and it now
 # lives in a repository of its own -- the split this package existed to justify
-# -- which is what this builds. The path is relative to this recipe, so the
-# checkout next door is the source of truth until that repository has a remote
-# to fetch a tag from.
+# -- which is what this builds, from its tag rather than from a checkout beside
+# this one, so the package names the revision it was built from.
 source:
-  path: ../../libarea
+  git: https://github.com/realthunder/libarea.git
+  rev: v${{ version }}
 
 build:
   number: ${{ build }}
