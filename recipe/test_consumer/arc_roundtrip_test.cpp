@@ -65,7 +65,10 @@ namespace {
 int main() {
 	CArea a = square_with_round_hole();
 
-	const double expected_before = 100. * 100. - M_PI * 20. * 20.;
+	// Not M_PI: it is a POSIX extension, and MSVC only defines it when
+	// _USE_MATH_DEFINES is set before <cmath>.
+	const double pi = 3.14159265358979323846;
+	const double expected_before = 100. * 100. - pi * 20. * 20.;
 	const double before = std::fabs(a.GetArea());
 	if (std::fabs(before - expected_before) > 1.) {
 		std::printf("area before: got %.4f, want %.4f\n", before, expected_before);
