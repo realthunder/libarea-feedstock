@@ -1,0 +1,25 @@
+# The recipe is rattler-build's, and the fork's channel settings live in
+# recipe/conda_build_config.yaml so a rerender cannot reset them (the
+# arrangement smesh-feedstock and freecad-rt-feedstock use).
+conda_build_tool: rattler-build
+conda_build:
+  pkg_format: '2'
+conda_forge_output_validation: false
+build_platform:
+  osx_arm64: osx_64
+github:
+  user_or_org: realthunder
+  branch_name: master
+  tooling_branch_name: main
+provider:
+  # osx and win are what the consumers of this package ship on, so they
+  # build here rather than on the Azure setup this fork does not have.
+  linux_64: github_actions
+  osx_64: github_actions
+  osx_arm64: github_actions
+  win_64: github_actions
+# README.md is written by hand -- it explains why Clipper is built in and
+# what was left out of the package, which smithy's template cannot say.
+skip_render:
+  - README.md
+test: native_and_emulated

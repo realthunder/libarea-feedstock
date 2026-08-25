@@ -42,7 +42,12 @@ tests:
       lib:
         - area
       files:
-        - lib/cmake/libarea/libareaConfig.cmake
+        # Not one of package_contents' well-known keys, so the path is
+        # taken literally -- and on Windows the install lands under
+        # Library/.
+        - if: win
+          then: Library/lib/cmake/libarea/libareaConfig.cmake
+          else: lib/cmake/libarea/libareaConfig.cmake
   - script:
       - cmake -G Ninja -B build -S test_consumer -DCMAKE_BUILD_TYPE=Release
       - cmake --build build
