@@ -48,19 +48,26 @@ tests:
         - if: win
           then: Library/lib/cmake/libarea/libareaConfig.cmake
           else: lib/cmake/libarea/libareaConfig.cmake
-  - script:
-      - cmake -G Ninja -B build -S test_consumer -DCMAKE_BUILD_TYPE=Release
-      - cmake --build build
-      - ctest --test-dir build --output-on-failure
-    requirements:
-      run:
-        - ${{ compiler('cxx') }}
-        - ${{ stdlib('c') }}
-        - cmake
-        - ninja
-    files:
-      recipe:
-        - test_consumer/
+  # Builds and RUNS the library, so it only means anything where the
+  # package's binaries can execute. On a cross build the compile would
+  # succeed and ctest would die with exec-format (status 126), which
+  # says nothing about the package -- so the whole test is native-only.
+  # package_contents above still checks the cross-built artefact.
+  - if: build_platform == target_platform
+    then:
+      script:
+        - cmake -G Ninja -B build -S test_consumer -DCMAKE_BUILD_TYPE=Release
+        - cmake --build build
+        - ctest --test-dir build --output-on-failure
+      requirements:
+        run:
+          - ${{ compiler('cxx') }}
+          - ${{ stdlib('c') }}
+          - cmake
+          - ninja
+      files:
+        recipe:
+          - test_consumer/
 
 about:
   homepage: https://github.com/Heeks/libarea

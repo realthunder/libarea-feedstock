@@ -48,6 +48,18 @@ Left out of the repository, and so out of the package:
 
 Nothing outside conda-forge is needed to build it.
 
+linux-aarch64 is cross-compiled from an x86_64 box -- nothing here is
+architecture-specific and Clipper is built in, so no emulated runtime is
+involved:
+
+    rattler-build build --recipe recipe/recipe.yaml \
+        -m .ci_support/linux_aarch64_.yaml --target-platform linux-aarch64
+
+The consumer test builds and RUNS the library, so it is native-only; on a
+cross build it would die with an exec-format error that says nothing about the
+package. `package_contents` still checks the cross-built artefact, and the
+result was confirmed to be an `ELF 64-bit LSB shared object, ARM aarch64`.
+
 ## Using it
 
     find_package(libarea CONFIG REQUIRED)
