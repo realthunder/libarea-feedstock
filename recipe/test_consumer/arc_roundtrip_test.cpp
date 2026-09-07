@@ -93,6 +93,30 @@ int main() {
 		return 1;
 	}
 
-	std::printf("ok: %.4f -> %.4f, %d arc vertices survived\n", before, after, arcs);
+	// Every name touched here is a STATIC DATA MEMBER, and on Windows those
+	// reach a consumer only because the headers annotate them: the DLL export
+	// machinery this library relies on carries functions across on its own and
+	// data not at all. 0.3.1 linked every method above and failed on these,
+	// which no test here noticed because none of them read one. Reading is
+	// enough to catch that -- the link is what breaks -- but the arc setting
+	// is worth asserting on behaviour, since it is what the round trip above
+	// is really testing.
+	std::printf("units %.4f, accuracy %.4f, point tolerance %.6f\n",
+	            CArea::m_units, CArea::m_accuracy, Point::tolerance);
+
+	const bool saved_fit_arcs = CArea::m_fit_arcs;
+	CArea::m_fit_arcs = false;
+	CArea without_fitting = square_with_round_hole();
+	without_fitting.Subtract(corner_square());
+	const int unfitted = count_arcs(without_fitting);
+	CArea::m_fit_arcs = saved_fit_arcs;
+
+	if (unfitted != 0) {
+		std::printf("m_fit_arcs = false still returned %d arc vertices\n", unfitted);
+		return 1;
+	}
+
+	std::printf("ok: %.4f -> %.4f, %d arc vertices survived, 0 without fitting\n",
+	            before, after, arcs);
 	return 0;
 }
