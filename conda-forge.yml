@@ -7,6 +7,12 @@ conda_build:
 conda_forge_output_validation: false
 build_platform:
   osx_arm64: osx_64
+  # aarch64 is cross-compiled from an x86_64 runner rather than emulated:
+  # nothing in this library is architecture-specific and Clipper is built
+  # in, so there is nothing qemu would need to run. recipe/build.sh passes
+  # ${CMAKE_ARGS} for the toolchain file and sysroot that requires, and the
+  # consumer test is native-only because it runs what it builds.
+  linux_aarch64: linux_64
 github:
   user_or_org: realthunder
   branch_name: master
@@ -15,6 +21,7 @@ provider:
   # osx and win are what the consumers of this package ship on, so they
   # build here rather than on the Azure setup this fork does not have.
   linux_64: github_actions
+  linux_aarch64: github_actions
   osx_64: github_actions
   osx_arm64: github_actions
   win_64: github_actions
